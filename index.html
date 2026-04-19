@@ -59,7 +59,7 @@
                 <div class="search-container" id="search-container">
                     <div class="search-bar">
                         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                        <input type="text" id="search-input" placeholder="e.g. deep learning, neural networks, cybersecurity..." autocomplete="off">
+                        <input type="text" id="search-input" placeholder="e.g. machine learning, climate change, cognitive behavioral therapy, supply chain..." autocomplete="off">
                         <button class="search-btn" id="search-btn">
                             <span class="btn-text">Search</span>
                             <div class="btn-loader" id="search-loader"></div>
@@ -70,10 +70,10 @@
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                             Search on Google Scholar ↗
                         </button>
-                        <button class="gs-btn" id="pubmed-btn" title="Open this search on PubMed">
+                        <button class="gs-btn" id="pubmed-btn" title="Open this search on PubMed (Life Sciences & Medicine)">
                             🔬 Search on PubMed ↗
                         </button>
-                        <button class="gs-btn" id="arxiv-btn" title="Open this search on arXiv (CS papers)">
+                        <button class="gs-btn" id="arxiv-btn" title="Open this search on arXiv (Physics, Math, CS)">
                             📄 Search on arXiv ↗
                         </button>
                     </div>
@@ -107,13 +107,14 @@
 
                 <!-- Quick Search Tags -->
                 <div class="quick-tags">
-                    <span class="tag-label">Popular:</span>
-                    <button class="quick-tag" data-query="machine learning deep learning neural networks">Machine Learning</button>
-                    <button class="quick-tag" data-query="computer vision image recognition">Computer Vision</button>
-                    <button class="quick-tag" data-query="natural language processing large language models">NLP & LLMs</button>
-                    <button class="quick-tag" data-query="cybersecurity intrusion detection">Cybersecurity</button>
-                    <button class="quick-tag" data-query="internet of things smart systems">IoT Systems</button>
-                    <button class="quick-tag" data-query="software engineering agile development">Software Engineering</button>
+                    <span class="tag-label">Popular Topics:</span>
+                    <button class="quick-tag" data-query="artificial intelligence machine learning">AI & Tech</button>
+                    <button class="quick-tag" data-query="climate change environmental impact">Environment</button>
+                    <button class="quick-tag" data-query="mental health cognitive therapy">Psychology</button>
+                    <button class="quick-tag" data-query="supply chain management logistics">Business</button>
+                    <button class="quick-tag" data-query="public health epidemiology">Public Health</button>
+                    <button class="quick-tag" data-query="online education elearning pedagogy">Education</button>
+                    <button class="quick-tag" data-query="quantum computing physics">Physics</button>
                 </div>
             </div>
 
@@ -196,6 +197,10 @@
                     <button class="action-btn" id="export-txt-btn">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                         Export .txt
+                    </button>
+                    <button class="action-btn" id="export-csv-btn" style="border-color: #00cec9; color: #00cec9;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        Export RRL Matrix (CSV)
                     </button>
                 </div>
             </div>

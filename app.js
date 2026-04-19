@@ -165,9 +165,39 @@ async function doSearch() {
     searchBtn.classList.remove('loading');
 }
 
+// ===== NLP PARSER =====
+function analyzeAbstract(abstract) {
+    if (!abstract) return null;
+    const text = abstract.toLowerCase();
+    
+    // Heuristics for objectives
+    const objMatch = abstract.match(/([^.]*\b(aim|purpose|objective|goal|we propose|this paper|this study)\b[^.]*\.)/i);
+    const objective = objMatch ? objMatch[0].trim() : 'Not explicitly stated';
+
+    // Heuristics for methods
+    const methMatch = abstract.match(/([^.]*\b(method|methodology|approach|dataset|experiment|evaluate|model|framework|algorithm)\b[^.]*\.)/i);
+    const methodology = methMatch ? methMatch[0].trim() : 'Not explicitly stated';
+
+    // Heuristics for results
+    const resMatch = abstract.match(/([^.]*\b(result|show|demonstrate|outperform|achieve|conclude|finding)\b[^.]*\.)/gi);
+    const results = resMatch ? resMatch[resMatch.length - 1].trim() : 'Not explicitly stated';
+
+    return { objective, methodology, results };
+}
+
 // ===== RENDER RESULTS =====
 function renderResults(papers) {
-    resultsGrid.innerHTML = papers.map((p, i) => `
+    resultsGrid.innerHTML = papers.map((p, i) => {
+        const insights = analyzeAbstract(p.abstract);
+        const insightsHtml = insights ? `
+            <div class="paper-insights" style="margin-top: 10px; padding: 10px; background: rgba(0, 206, 201, 0.05); border-left: 2px solid var(--accent-3); border-radius: 4px; font-size: 0.8rem;">
+                <div style="margin-bottom: 4px;"><strong>Target:</strong> ${escHtml(insights.objective)}</div>
+                <div style="margin-bottom: 4px;"><strong>Method:</strong> ${escHtml(insights.methodology)}</div>
+                <div><strong>Findings:</strong> ${escHtml(insights.results)}</div>
+            </div>
+        ` : '';
+
+        return `
         <div class="paper-card" data-index="${i}">
             <div class="paper-type">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -176,27 +206,29 @@ function renderResults(papers) {
             <div class="paper-title">${escHtml(p.title)}</div>
             <div class="paper-authors">${p.authors.length ? escHtml(p.authors.slice(0, 4).join(', ')) + (p.authors.length > 4 ? ' et al.' : '') : 'Unknown authors'}</div>
             <div class="paper-meta">
-                ${p.year ? `<span class="meta-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${p.year}</span>` : ''}
+                ${p.year ? `<span class="meta-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${p.year}</span>` : ''}
                 ${p.journal ? `<span class="meta-tag">${escHtml(p.journal.length > 40 ? p.journal.substring(0, 40) + '...' : p.journal)}</span>` : ''}
                 ${p.citations ? `<span class="meta-tag">📄 ${p.citations} citations</span>` : ''}
             </div>
             ${p.abstract ? `<div class="paper-abstract">${escHtml(p.abstract)}</div>` : ''}
-            <div class="paper-actions">
+            ${insightsHtml}
+            <div class="paper-actions" style="margin-top: 14px;">
                 <button class="paper-btn save-btn ${isInLibrary(p) ? 'saved' : ''}" onclick="event.stopPropagation(); toggleSave(${i})">
-                    <svg viewBox="0 0 24 24" fill="${isInLibrary(p) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                    <svg viewBox="0 0 24 24" fill="${isInLibrary(p) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                     ${isInLibrary(p) ? 'Saved' : 'Save'}
                 </button>
                 ${p.url ? `<a class="paper-btn primary-btn" href="${escHtml(p.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     Open
                 </a>` : ''}
                 <button class="paper-btn" onclick="event.stopPropagation(); openDetail(${i})">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                     Details
                 </button>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function escHtml(str) {
@@ -382,7 +414,38 @@ $('export-txt-btn').addEventListener('click', () => {
     a.href = URL.createObjectURL(blob);
     a.download = `references_${currentFormat}.txt`;
     a.click();
-    showToast('Exported!', 'success');
+    showToast('Exported to TXT!', 'success');
+});
+
+// CSV RRL Matrix Export
+$('export-csv-btn').addEventListener('click', () => {
+    if (library.length === 0) return showToast('No references in library', 'error');
+    
+    let csv = '\uFEFF'; // BOM for Excel UTF-8 support
+    csv += 'Title,Authors,Year,Journal/Source,DOI/URL,Citations,Objective,Methodology,Key Findings\n';
+    
+    library.forEach(p => {
+        const insights = analyzeAbstract(p.abstract) || { objective: '', methodology: '', results: '' };
+        const row = [
+            `"${(p.title || '').replace(/"/g, '""')}"`,
+            `"${(p.authors || []).join('; ').replace(/"/g, '""')}"`,
+            p.year || '',
+            `"${(p.journal || p.source || '').replace(/"/g, '""')}"`,
+            `"${(p.doi || p.url || '').replace(/"/g, '""')}"`,
+            p.citations || 0,
+            `"${insights.objective.replace(/"/g, '""')}"`,
+            `"${insights.methodology.replace(/"/g, '""')}"`,
+            `"${insights.results.replace(/"/g, '""')}"`
+        ];
+        csv += row.join(',') + '\n';
+    });
+    
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'RRL_Literature_Matrix.csv';
+    a.click();
+    showToast('Literature Matrix CSV Exported!', 'success');
 });
 
 document.querySelectorAll('.format-btn').forEach(btn => {
