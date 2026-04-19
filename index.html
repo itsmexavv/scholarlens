@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScholarLens — AI Research Reference Finder</title>
+    <meta name="description" content="Find, organize, and cite academic references for your research papers and Review of Related Literature (RRL) with ease.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+
+    <!-- Navigation -->
+    <nav id="main-nav">
+        <div class="nav-brand">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="M21 21l-4.35-4.35"/>
+                    <path d="M8 8h6M8 11h4"/>
+                </svg>
+            </div>
+            <span class="brand-text">Scholar<span class="accent">Lens</span></span>
+        </div>
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="search" id="nav-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <span>Search</span>
+            </button>
+            <button class="nav-tab" data-tab="library" id="nav-library">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                <span>My Library</span>
+                <span class="badge" id="library-count">0</span>
+            </button>
+            <button class="nav-tab" data-tab="cite" id="nav-cite">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <span>Cite & Export</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="app-main">
+
+        <!-- ==================== SEARCH TAB ==================== -->
+        <section class="tab-content active" id="tab-search">
+            <!-- Hero Search -->
+            <div class="hero-section">
+                <h1 class="hero-title">Find Research <span class="gradient-text">References</span> Instantly</h1>
+                <p class="hero-subtitle">Search millions of academic papers from CrossRef, Semantic Scholar, OpenAlex & Google Scholar. Build your RRL effortlessly.</p>
+
+                <div class="search-container" id="search-container">
+                    <div class="search-bar">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                        <input type="text" id="search-input" placeholder="e.g. deep learning, neural networks, cybersecurity..." autocomplete="off">
+                        <button class="search-btn" id="search-btn">
+                            <span class="btn-text">Search</span>
+                            <div class="btn-loader" id="search-loader"></div>
+                        </button>
+                    </div>
+                    <div class="google-scholar-row">
+                        <button class="gs-btn" id="gs-btn" title="Open this search on Google Scholar">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                            Search on Google Scholar ↗
+                        </button>
+                        <button class="gs-btn" id="pubmed-btn" title="Open this search on PubMed">
+                            🔬 Search on PubMed ↗
+                        </button>
+                        <button class="gs-btn" id="arxiv-btn" title="Open this search on arXiv (CS papers)">
+                            📄 Search on arXiv ↗
+                        </button>
+                    </div>
+                    <div class="search-filters">
+                        <div class="filter-group">
+                            <label>Source</label>
+                            <select id="filter-source">
+                                <option value="crossref">CrossRef</option>
+                                <option value="semantic">Semantic Scholar</option>
+                                <option value="openalex">OpenAlex</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Year From</label>
+                            <input type="number" id="filter-year-from" placeholder="2020" min="1900" max="2026">
+                        </div>
+                        <div class="filter-group">
+                            <label>Year To</label>
+                            <input type="number" id="filter-year-to" placeholder="2026" min="1900" max="2026">
+                        </div>
+                        <div class="filter-group">
+                            <label>Results</label>
+                            <select id="filter-count">
+                                <option value="10">10</option>
+                                <option value="20" selected>20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Search Tags -->
+                <div class="quick-tags">
+                    <span class="tag-label">Popular:</span>
+                    <button class="quick-tag" data-query="machine learning deep learning neural networks">Machine Learning</button>
+                    <button class="quick-tag" data-query="computer vision image recognition">Computer Vision</button>
+                    <button class="quick-tag" data-query="natural language processing large language models">NLP & LLMs</button>
+                    <button class="quick-tag" data-query="cybersecurity intrusion detection">Cybersecurity</button>
+                    <button class="quick-tag" data-query="internet of things smart systems">IoT Systems</button>
+                    <button class="quick-tag" data-query="software engineering agile development">Software Engineering</button>
+                </div>
+            </div>
+
+            <!-- Search Results -->
+            <div class="results-section" id="results-section">
+                <div class="results-header" id="results-header" style="display:none;">
+                    <h2 id="results-title">Results</h2>
+                    <div class="results-meta">
+                        <span id="results-count"></span>
+                        <button class="sort-btn" id="sort-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5h10M11 9h7M11 13h4M3 17l3 3 3-3M6 18V4"/></svg>
+                            Sort by Relevance
+                        </button>
+                    </div>
+                </div>
+                <div class="results-grid" id="results-grid">
+                    <!-- Results populated by JS -->
+                </div>
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                    </div>
+                    <h3>Start Your Research Journey</h3>
+                    <p>Search for academic papers, journals, and articles to build your Review of Related Literature.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== LIBRARY TAB ==================== -->
+        <section class="tab-content" id="tab-library">
+            <div class="library-header">
+                <div>
+                    <h2 class="section-title">My <span class="gradient-text">Library</span></h2>
+                    <p class="section-desc">Your saved references, organized and ready for your RRL.</p>
+                </div>
+                <div class="library-actions">
+                    <button class="action-btn" id="clear-library-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        Clear All
+                    </button>
+                </div>
+            </div>
+            <div class="library-grid" id="library-grid">
+                <!-- Populated by JS -->
+            </div>
+            <div class="empty-state" id="library-empty">
+                <div class="empty-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                </div>
+                <h3>Your Library is Empty</h3>
+                <p>Save references from search results to build your collection.</p>
+            </div>
+        </section>
+
+        <!-- ==================== CITE & EXPORT TAB ==================== -->
+        <section class="tab-content" id="tab-cite">
+            <div class="cite-header">
+                <div>
+                    <h2 class="section-title">Cite & <span class="gradient-text">Export</span></h2>
+                    <p class="section-desc">Generate formatted citations from your library in APA, MLA, or Chicago style.</p>
+                </div>
+            </div>
+            <div class="cite-controls">
+                <div class="cite-format-selector">
+                    <button class="format-btn active" data-format="apa" id="format-apa">APA 7th</button>
+                    <button class="format-btn" data-format="mla" id="format-mla">MLA 9th</button>
+                    <button class="format-btn" data-format="chicago" id="format-chicago">Chicago</button>
+                    <button class="format-btn" data-format="ieee" id="format-ieee">IEEE</button>
+                </div>
+                <div class="cite-actions">
+                    <button class="action-btn primary" id="copy-all-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        Copy All Citations
+                    </button>
+                    <button class="action-btn" id="export-txt-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Export .txt
+                    </button>
+                </div>
+            </div>
+            <div class="citations-list" id="citations-list">
+                <!-- Populated by JS -->
+            </div>
+            <div class="empty-state" id="cite-empty">
+                <div class="empty-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                </div>
+                <h3>No References to Cite</h3>
+                <p>Save some references to your library first, then come back here to generate citations.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detail-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div class="modal-body" id="modal-body">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
